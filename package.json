@@ -1,0 +1,23 @@
+{
+  "name": "one-stop",
+  "version": "1.0.0",
+  "description": "대구시 주민참여 예산제 서비스",
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/node": "^7.22.19",
+    "@babel/preset-env": "^7.23.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.0",
+    "node-rsa": "^1.1.1",
+    "node-tesseract": "^0.2.7",
+    "nodemon": "^3.0.1"
+  }
+}
