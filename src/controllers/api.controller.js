@@ -5,6 +5,7 @@ import Wallet from "../models/wallets.model";
 import jsonWebToken from "jsonwebtoken";
 import axios from "axios";
 const router = express.Router();
+import "dotenv/config";
 
 // Create a new survey
 router.post("/create", async (req, res) => {

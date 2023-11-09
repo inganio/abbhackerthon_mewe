@@ -1,7 +1,6 @@
 import express from "express";
 import checkJWT from "../middlewares/checkJWT.middleware";
 import apiController from "../controllers/api.controller";
-import multer from "multer";
 
 const router = express.Router();
 router.use(checkJWT.check);

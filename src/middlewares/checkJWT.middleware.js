@@ -1,4 +1,5 @@
 import jsonWebToken from "jsonwebtoken";
+import "dotenv/config";
 
 function check(req, res, next) {
   if (req.headers && req.headers.authorization) {
