@@ -4,6 +4,12 @@ import "dotenv/config";
 import authRouter from "./src/routes/auth.route";
 import apiRouter from "./src/routes/api.route";
 import "./src/configs/db.config";
+import cron from "node-cron";
+
+cron.schedule("0 0 * * *", async () => {
+  console.log("Running script to update completed status...");
+  await updateCompletedStatus();
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;

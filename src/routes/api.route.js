@@ -14,13 +14,13 @@ router.post("/opinions", apiController.post);
 // Read
 //
 /** get proceeding opinions **/
-router.get("/proceeding/opinions", apiController.getProceeding);
+router.get("/proceeding/opinions", apiController.get);
 
 /** get all opinions **/
-router.get("/opinions", apiController.getAll);
+router.get("/opinions", apiController.get);
 
 /** get my opinions **/
-router.get("/my/opinions", apiController.getMyOpinion);
+router.get("/my/opinions", apiController.get);
 
 // Update
 //
@@ -30,6 +30,6 @@ router.put("/opinions", apiController.put);
 // Delete
 //
 /** delete opinions **/
-router.delete("/opinions", apiController.deleteMy);
+router.delete("/opinions", apiController.delete);
 
 module.exports = router;

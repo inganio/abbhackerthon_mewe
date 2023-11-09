@@ -1,66 +1,50 @@
-import "dotenv/config";
-import jsonWebToken from "jsonwebtoken";
-import Opinion from "../models/opinion.model";
+import Survey from "../models/survey.model.js";
 
-function uploadOpinion(req) {}
-
-async function findProceedingOpinon(page, itemsPerPage) {
+async function createSurvey(newSurveyData) {
   try {
-    const now = new Date();
-    const skip = (page - 1) * itemsPerPage;
-
-    // Find ongoing events with pagination
-    const ongoingEvents = await Opinion.find({
-      startDate: { $lte: now },
-      dueDate: { $gte: now },
-    })
-      .skip(skip)
-      .limit(itemsPerPage);
-
-    return ongoingEvents;
+    const newSurvey = new Survey(newSurveyData);
+    const savedSurvey = await newSurvey.save();
+    return savedSurvey;
   } catch (error) {
     throw error;
   }
 }
 
-async function findAll(page, itemsPerPage) {
+async function getAllSurveys(filter = {}, page = 1, pageSize = 7) {
   try {
-    const skip = (page - 1) * itemsPerPage;
+    const surveys = await Survey.find(filter)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
 
-    // Find all events with pagination
-    const allEvents = await Opinion.find({}).skip(skip).limit(itemsPerPage);
-
-    return allEvents;
+    return surveys;
   } catch (error) {
     throw error;
   }
 }
 
-async function findMyOpinions(accessToken, page, itemsPerPage) {
+async function updateSurvey(surveyId, update) {
   try {
-    const decoded = jsonWebToken.verify(
-      authorization,
-      process.env.SECRET_JWT_CODE,
-    );
+    const updatedSurvey = await Survey.findByIdAndUpdate(surveyId, update, {
+      new: true,
+    });
+    return updatedSurvey;
+  } catch (error) {
+    throw error;
+  }
+}
 
-    const userId = decoded.id;
-
-    const skip = (page - 1) * itemsPerPage;
-
-    // Find the user's events with pagination
-    const userOpinions = await Opinion.find({ userId: userId })
-      .skip(skip)
-      .limit(itemsPerPage);
-
-    return userOpinions;
+async function deleteSurvey(surveyId) {
+  try {
+    const deletedSurvey = await Survey.findByIdAndDelete(surveyId);
+    return deletedSurvey;
   } catch (error) {
     throw error;
   }
 }
 
 module.exports = {
-  uploadOpinion,
-  findAll,
-  findMyOpinions,
-  findProceedingOpinon,
+  createSurvey,
+  getAllSurveys,
+  updateSurvey,
+  deleteSurvey,
 };
