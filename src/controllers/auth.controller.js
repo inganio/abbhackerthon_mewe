@@ -1,16 +1,22 @@
 import authService from "../services/auth.service";
 
 async function patchIdcard(req, res, next) {
-  if (!req.body.imageData) {
-    return res.status(400).json({ error: "Image data is missing." });
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ status: "Error", message: "No file uploaded" });
   }
 
-  const { data, message } = authService.verifyIDCard(req.body.imageData);
+  const imageBuffer = req.file.buffer; // Use req.file.buffer instead of req.file.imageData
 
-  return res.json({
-    data: data,
-    message: message,
-  });
+  authService
+    .verifyIDCard(imageBuffer)
+    .then((result) => {
+      res.status(200).json({ status: "OK", result });
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 }
 
 async function postPassword(req, res, next) {
@@ -19,17 +25,16 @@ async function postPassword(req, res, next) {
   }
 
   const registryData = req.body.data;
-  const registerResult = authService.registerUser(registryData);
+  const registerResult = await authService.registerUser(registryData);
 
   if (registerResult.error) {
     return res.status(400).json({
       error: registerResult.error,
     });
   }
-
   return res.json({
     data: registerResult,
-    message: `${registerResult.name}님 가입을 환영합니다!!`,
+    message: `${registerResult.user.name}님 가입을 환영합니다!!`,
   });
 }
 

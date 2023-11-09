@@ -13,6 +13,10 @@ const opinionSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  userId: {
+    type: String,
+    required: true,
+  },
   pdfUrl: {
     type: Date,
     required: true,

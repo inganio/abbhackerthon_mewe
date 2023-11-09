@@ -57,3 +57,10 @@ async function findMyOpinions(accessToken, page, itemsPerPage) {
     throw error;
   }
 }
+
+module.exports = {
+  uploadOpinion,
+  findAll,
+  findMyOpinions,
+  findProceedingOpinon,
+};

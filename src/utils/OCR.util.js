@@ -1,20 +1,5 @@
-import tesseract from "node-tesseract";
-
-function performOCR(image) {
-  return new Promise((resolve, reject) => {
-    tesseract.process(image, (err, text) => {
-      if (err) {
-        console.log("OCR Error: ", err);
-        reject("OCR Error");
-      } else {
-        console.log("OCR Result: ", text);
-        resolve(text);
-      }
-    });
-  });
-}
-
 function parseKoreanIDCardOCR(ocrText) {
+  console.log(ocrText);
   const keyValuePairs = {};
 
   // Define key-value extraction patterns for specific fields
@@ -39,6 +24,5 @@ function parseKoreanIDCardOCR(ocrText) {
 }
 
 module.exports = {
-  performOCR,
   parseKoreanIDCardOCR,
 };

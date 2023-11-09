@@ -1,44 +1,43 @@
-import cryptoUtil from "../utils/cryto.util";
 import ocrUtil from "../utils/OCR.util";
 import bcrypt from "bcryptjs";
 import jsonWebToken from "jsonwebtoken";
 import User from "../models/user.model";
+import Wallet from "../models/wallets.model";
+import axios from "axios";
+import Tesseract from "tesseract.js";
+import "dotenv/config";
 
-function verifyIDCard(encryptedImage) {
-  const decryptedImage = cryptoUtil.decryptImageData(encryptedImage);
-  const ocrResult = ocrUtil.performOCR(decryptedImage);
-
-  if (!ocrResult) {
-    return {
-      data: null,
-      message: "에러가 발생했습니다.",
-    };
-  }
-
-  const parsedOcrResult = ocrUtil.parseKoreanIDCardOCR(ocrResult);
-  console.log(ocrResult);
-
-  return {
-    data: parsedOcrResult,
-    message: "비밀번호와 함께 서버로 요청을 보내주세요!!",
-  };
+function verifyIDCard(image) {
+  return new Promise((resolve, reject) => {
+    Tesseract.recognize(image, "kor", { logger: (info) => console.log(info) })
+      .then(({ data: { text } }) => {
+        console.log(text);
+        const keyValues = ocrUtil.parseKoreanIDCardOCR(text);
+        console.log(keyValues);
+        resolve(keyValues);
+      })
+      .catch((error) => {
+        console.error(error);
+        reject({ status: "Error", message: "OCR processing failed" });
+      });
+  });
 }
 
-function registerUser(data) {
+async function registerUser(data) {
   if (data.password !== data.passwordCheck) {
     return {
       error: "비밀번호가 다릅니다!",
     };
   }
 
-  let user = User.findOne({ name: data.name, address: data.address });
-  if (userCheck) {
+  let user = await User.findOne({ name: data.name, address: data.address });
+  if (user) {
     return {
       error: "이미 존재하는 회원 입니다!",
     };
   }
 
-  user = User.create({
+  user = await User.create({
     name: data.name,
     birthDate: data.birthDate,
     address: data.address,
@@ -50,12 +49,32 @@ function registerUser(data) {
       error: "회원가입 실패",
     };
   }
+
+  const url = "http://175.106.96.224:3398/v1/mitumt/com/acc_create";
+
+  const response = await axios.post(url, {
+    token: process.env.API_TOKEN,
+    chain: "mitumt",
+  });
+
+  const walletData = response.data.data.wallet;
+
+  console.log(walletData);
+
+  const wallet = await Wallet.create({
+    userId: user._id,
+    privatekey: walletData.privatekey,
+    publickey: walletData.publickey,
+    address: walletData.address,
+  });
+
   return {
     token: jsonWebToken.sign(
       { id: user._id, name: user.name },
       process.env.SECRET_JWT_CODE,
       { expiresIn: process.env.JWT_EXPIRES_IN },
     ),
+    wallet: wallet,
     user: user,
   };
 }
